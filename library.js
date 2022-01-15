@@ -33,10 +33,10 @@ const library = {
      
      printPlaylists = function () {
      
-            for (item in this.playlists) {
-              id = this.playlists[item].id;
-              name = this.playlists[item].name;
-              tracks = this.playlists[item].tracks.length;
+            for (item in library.playlists) {
+              id = library.playlists[item].id;
+              name = library.playlists[item].name;
+              tracks = library.playlists[item].tracks.length;
               console.log(id + ": by " + name + " - " + tracks + " tracks.")
             }
           
@@ -55,11 +55,11 @@ const library = {
      // prints a list of tracks for a given playlist, using the following format:
      printTracks = function () {
      
-            for (item in this.tracks) {
-              trackNum = this.tracks[item].id;
-              name = this.tracks[item].name;
-              artist = this.tracks[item].artist;
-              album = this.tracks[item].album;
+            for (item in library.tracks) {
+              trackNum = library.tracks[item].id;
+              name = library.tracks[item].name;
+              artist = library.tracks[item].artist;
+              album = library.tracks[item].album;
               console.log(trackNum + ": " + name + " by " + artist + " (" + album + ")")
             }
           
@@ -70,18 +70,18 @@ const library = {
      // t02: Model View Controller by James Dempsey (WWDC 2003)
      printPlaylist = function (playlistId) {
      
-            var playListId = this.playlists[playlistId];
-            var playListName = this.playlists[playlistId].name;
-            var playListLength = this.playlists[playlistId].tracks.length;
+            var playListId = library.playlists[playlistId];
+            var playListName = library.playlists[playlistId].name;
+            var playListLength = library.playlists[playlistId].tracks.length;
             console.log(playlistId + ": " + playListName + " - " + playListLength + " tracks.");
+           
+            for (track in library.playlists[playlistId].tracks) {
           
-            for (track in this.playlists[playlistId].tracks) {
+              trackId = library.playlists[playlistId].tracks[track];
           
-              trackId = this.playlists[playlistId].tracks[track];
-          
-              trackName = this.tracks[trackId].name;
-              trackArtist = this.tracks[trackId].artist;
-              trackAlbum = this.tracks[trackId].album;
+              trackName = library.tracks[trackId].name;
+              trackArtist = library.tracks[trackId].artist;
+              trackAlbum = library.tracks[trackId].album;
           
               console.log(trackId + ": " + trackName + " by " + trackArtist + " (" + trackAlbum + ")");
           
@@ -100,7 +100,7 @@ const library = {
      
      // adds an existing track to an existing playlist
      addTrackToPlaylist = function (trackId, playlistId) {
-     
+       console.log(library.playlists[playlistId].tracks)
             library.playlists[playlistId].tracks.push(trackId);
             console.log(library.playlists[playlistId].tracks)
         
@@ -110,7 +110,7 @@ const library = {
      // console.log(library.playlists)
      
      // generates a unique id
-     // (already implemented: use this for addTrack and addPlaylist)
+     // (already implemented: use library for addTrack and addPlaylist)
      generateUid = function () {
             return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
           },
@@ -119,9 +119,9 @@ const library = {
      
      // adds a track to the library
      addTrack = function (name, artist, album) {
-            uid = this.uid();
-            this.tracks[uid] = {name: name, artist: artist, album: album};
-            console.log(this.tracks);
+            uid = this.generateUid();
+            library.tracks[uid] = {name: name, artist: artist, album: album};
+            console.log(library.tracks);
           
           }
      
@@ -132,8 +132,8 @@ const library = {
      
      addPlaylist = function (name) {
             uid = this.generateUid();
-            this.playlists[generateUid] = {id: generateUid, name: name, tracks: ""};
-            console.log(this.playlists);
+            library.playlists[uid] = {id: uid, name: name, tracks: ""};
+            console.log(library.playlists);
           
           }
      // addTrack('Water', 'Sweet', 'Lion')
@@ -145,13 +145,24 @@ const library = {
      // tip: use "string".search("tri") 
      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/search
      const printSearchResults = function(query) {
-     
+      let queryResult = [];
+       for (let track in library.tracks) {
+        
+       if ( library.tracks[track].name.toLowerCase().includes(query.toLowerCase()) ||  library.tracks[track].artist.toLowerCase().includes(query.toLowerCase())
+        || library.tracks[track].album.toLowerCase().includes( query.toLowerCase())) {
+        queryResult.push(library.tracks[track])        }  
+            
+
+
+      }
+      console.log(queryResult);
      }
      
      
-     library.printPlaylists();
-     library.printTracks();
-     library.printPlaylist("p01");
-     library.addTrackToPlaylist("t03", "p01");
-     library.addTrack("Sweet");
-     library.addPlaylist("Lion")
+     printPlaylists();
+     printTracks();
+     printPlaylist("p01");
+     addTrackToPlaylist("t03", "p01");
+     addTrack("Sweet", "Mo", "Hi");
+     addPlaylist("Lion")
+     printSearchResults("John Cage");
